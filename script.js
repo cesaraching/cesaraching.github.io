@@ -12,6 +12,28 @@ if (menuBtn && navLinks) {
   });
 }
 
+const filterButtons = document.querySelectorAll(".filter-btn");
+const portfolioItems = document.querySelectorAll(".portfolio-item");
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const filter = button.dataset.filter;
+
+    filterButtons.forEach((btn) => btn.classList.remove("active"));
+    button.classList.add("active");
+
+    portfolioItems.forEach((item) => {
+      const category = item.dataset.category || "";
+
+      if (filter === "all" || category.includes(filter)) {
+        item.classList.remove("hidden");
+      } else {
+        item.classList.add("hidden");
+      }
+    });
+  });
+});
+
 const navItems = document.querySelectorAll(".nav-links a");
 
 navItems.forEach((item) => {
@@ -22,38 +44,18 @@ navItems.forEach((item) => {
   });
 });
 
-const filterButtons = document.querySelectorAll(".filter-btn");
-const projectCards = document.querySelectorAll(".project-card");
-
-filterButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const filter = button.dataset.filter;
-
-    filterButtons.forEach((btn) => btn.classList.remove("active"));
-    button.classList.add("active");
-
-    projectCards.forEach((card) => {
-      const category = card.dataset.category || "";
-
-      if (filter === "all" || category.includes(filter)) {
-        card.classList.remove("hidden");
-      } else {
-        card.classList.add("hidden");
-      }
-    });
-  });
-});
-
 const videoModal = document.getElementById("videoModal");
 const videoFrame = document.getElementById("videoFrame");
 const videoClose = document.getElementById("videoClose");
 const videoBackdrop = document.getElementById("videoBackdrop");
-const videoButtons = document.querySelectorAll("[data-video]");
+const playButtons = document.querySelectorAll("[data-video]");
 
 function openVideo(videoUrl) {
   if (!videoModal || !videoFrame) return;
 
-  videoFrame.src = `${videoUrl}?autoplay=1&rel=0`;
+  const autoplayUrl = `${videoUrl}?autoplay=1&rel=0`;
+
+  videoFrame.src = autoplayUrl;
   videoModal.classList.add("open");
   videoModal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
@@ -68,7 +70,7 @@ function closeVideo() {
   document.body.style.overflow = "";
 }
 
-videoButtons.forEach((button) => {
+playButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const videoUrl = button.dataset.video;
 
@@ -90,25 +92,4 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeVideo();
   }
-});
-
-const revealElements = document.querySelectorAll(".reveal");
-
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  },
-  {
-    threshold: 0.14,
-    rootMargin: "0px 0px -40px 0px",
-  }
-);
-
-revealElements.forEach((element) => {
-  revealObserver.observe(element);
 });
